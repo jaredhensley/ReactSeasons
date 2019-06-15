@@ -10,13 +10,27 @@ import ReactDOM from 'react-dom';
 // }
 
 class App extends React.Component {
-    render() {
+
+    // first function called on any new instance of the App component
+    // good place to init state 
+    constructor(props) {
+        // super invokes the constructor from the React.Component, 100% necessary
+        super(props);
+
+        this.state = {
+            lat: null
+        };
+
         window.navigator.geolocation.getCurrentPosition(
-            (position) => console.log(position),
+            (position) => {
+                this.setState({lat: position.coords.latitude});
+            },
             (err) => console.log(err)
         );
+    }
 
-        return <div>lattitude: </div>
+    render() {
+        return <div>lattitude: {this.state.lat}</div>
     }
 }
 

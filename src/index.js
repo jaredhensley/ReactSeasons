@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SeasonDisplay from './SeasonDisplay';
 
 // const App = () => {
 //     window.navigator.geolocation.getCurrentPosition(
@@ -11,26 +12,34 @@ import ReactDOM from 'react-dom';
 
 class App extends React.Component {
 
-    // first function called on any new instance of the App component
-    // good place to init state 
-    constructor(props) {
-        // super invokes the constructor from the React.Component, 100% necessary
-        super(props);
+    // removed constructor, transpiles down to constructor with super call and state setup
+    state = {
+        lat: null,
+        errorMessage: ''
+    };
 
-        this.state = {
-            lat: null
-        };
-
+    componentDidMount() {
+        console.log('my component was rendered to the screen');
         window.navigator.geolocation.getCurrentPosition(
-            (position) => {
-                this.setState({lat: position.coords.latitude});
-            },
-            (err) => console.log(err)
+            position => this.setState({lat: position.coords.latitude}),
+            err => this.setState({ errorMessage: 'not able to fetch geolocation'})
         );
     }
 
+    componentDidUpdate() {
+        console.log('my component rerendered!');
+    }
+
     render() {
-        return <div>lattitude: {this.state.lat}</div>
+        if (this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage}</div>;
+        }
+        
+        if (!this.state.errorMessage && this.state.lat) {
+            return <SeasonDisplay lat={this.state.lat}/>;
+        }
+
+        return <div>Loading...</div>;
     }
 }
 
